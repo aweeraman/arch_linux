@@ -38,8 +38,7 @@ If using EFI, create a 512MB VFAT partition for /boot and use type 'EF00' for th
 
 ```
 # gdisk /dev/sdaX
-
-```
+# mkfs.vfat /dev/sdXX
 # mkfs.ext4 /dev/sdXX
 # mkswap /dev/sdXX
 ```
