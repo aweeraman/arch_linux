@@ -21,3 +21,26 @@
 # umount /mnt
 # cryptsetup close backup
 ```
+
+## A simple script that can be used to perform a full system backup
+
+```
+#!/bin/bash
+echo "Starting backup: `date`" >> ~/backup.log
+cryptsetup open /dev/sdc4 backup
+mount /dev/mapper/backup /backup
+rsync -aAXv --delete --exclude=/dev/*        \
+                     --exclude=/proc/*       \
+                     --exclude=/sys/*        \
+                     --exclude=/tmp/*        \
+                     --exclude=/run/*        \
+                     --exclude=/mnt/*        \
+                     --exclude=/backup/*     \
+                     --exclude=/lost+found/* \
+                     --exclude="Downloads"   \
+                     --exclude=.cache        \
+                     --exclude=/shared/*     / /backup >> ~/backup.log 2>&1
+umount /backup
+cryptsetup close backup
+echo "Ending backup: `date`" >> ~/backup.log
+```
