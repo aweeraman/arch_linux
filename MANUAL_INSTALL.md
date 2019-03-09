@@ -30,9 +30,14 @@ Check if you have a computer that requires UEFI by looking for the existence of 
 $ ls /sys/firmware/efi/efivars
 ```
 
-If so, the steps for installation are a little different, mostly from the partitioning standpoint.
+If so, you will need to create a boot partition for EFI.
 
 ## Create the file systems on the partitions
+
+If using EFI, create a 512MB VFAT partition for /boot and use type 'EF00' for the partition.
+
+```
+# gdisk /dev/sdaX
 
 ```
 # mkfs.ext4 /dev/sdXX
