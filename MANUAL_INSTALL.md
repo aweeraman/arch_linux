@@ -44,6 +44,7 @@ If so, the steps for installation are a little different, mostly from the partit
 # mount /dev/sdXX /mnt
 # mkdir /mnt/boot && mnt /dev/sdXX /mnt/boot
 # swapon /dev/sdXX
+```
 
 ## Bootstrap the Arch Linux installation
 
