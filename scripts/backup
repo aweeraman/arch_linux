@@ -49,7 +49,7 @@ elif [ "${1}" == "restore" ]; then
   echo "Starting restore: `date`" >> ~/backup.log
   cryptsetup open ${BACKUP_DEVICE} backup
   mount /dev/mapper/backup ${BACKUP_MOUNT}
-  rsync -aAXv --dry-run --delete --exclude="lost+found" ${BACKUP_MOUNT} ${RESTORE_TARGET} 2>&1
+  rsync -aAXv --dry-run --exclude="backup" ${BACKUP_MOUNT} ${RESTORE_TARGET}
   umount ${BACKUP_MOUNT}
   cryptsetup close backup
   echo "Ending restore: `date`" >> ~/backup.log
