@@ -1,0 +1,59 @@
+#!/bin/bash
+
+DEFAULT_BACKUP_DEVICE=/dev/sdc4
+BACKUP_SOURCE=/
+RESTORE_TARGET=/
+BACKUP_MOUNT=/backup
+
+function usage() {
+  echo "Usage: ${0} backup /dev/sdc4"
+  echo "       ${0} restore /dev/sdc4"
+  exit 0
+}
+
+if [ "${1}" == "" ]; then
+  usage
+fi
+
+BACKUP_DEVICE=${DEFAULT_BACKUP_DEVICE}
+if [ "${2}" != "" ]; then
+  BACKUP_DEVICE=${2}
+fi
+
+if [ ! -d "${BACKUP_MOUNT}" ]; then
+  mkdir ${BACKUP_MOUNT}
+fi
+
+if [ "${1}" == "backup" ]; then
+
+  echo "Starting backup: `date`" >> ~/backup.log
+  cryptsetup open ${BACKUP_DEVICE} backup
+  mount /dev/mapper/backup ${BACKUP_MOUNT}
+  rsync -aAXv --delete --exclude=/dev/*        \
+                       --exclude=/proc/*       \
+                       --exclude=/sys/*        \
+                       --exclude=/tmp/*        \
+                       --exclude=/run/*        \
+                       --exclude=/mnt/*        \
+                       --exclude=/backup/*     \
+                       --exclude=/lost+found/* \
+                       --exclude="Downloads"   \
+                       --exclude=.cache        \
+                       --exclude=/shared/*     ${BACKUP_SOURCE} ${BACKUP_MOUNT} >> ~/backup.log 2>&1
+  umount ${BACKUP_MOUNT}
+  cryptsetup close backup
+  echo "Ending backup: `date`" >> ~/backup.log
+
+elif [ "${1}" == "restore" ]; then
+
+  echo "Starting restore: `date`" >> ~/backup.log
+  cryptsetup open ${BACKUP_DEVICE} backup
+  mount /dev/mapper/backup ${BACKUP_MOUNT}
+  rsync -aAXv --dry-run --delete --exclude="lost+found" ${BACKUP_MOUNT} ${RESTORE_TARGET} 2>&1
+  umount ${BACKUP_MOUNT}
+  cryptsetup close backup
+  echo "Ending restore: `date`" >> ~/backup.log
+
+  echo "Remove the --dry-run argument and run again to perform the restore."
+fi
+
