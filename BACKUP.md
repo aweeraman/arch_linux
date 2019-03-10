@@ -48,5 +48,5 @@ echo "Ending backup: `date`" >> ~/backup.log
 ## To restore
 
 ```
-# rsync -aAXv --dry-run --delete --exclude="lost+found" /backup /
+# rsync -aAXv --dry-run --delete --exclude="lost+found" --exclude="boot" --exclude="var" /backup/ /arch/
 ```
