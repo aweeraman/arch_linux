@@ -44,3 +44,9 @@ umount /backup
 cryptsetup close backup
 echo "Ending backup: `date`" >> ~/backup.log
 ```
+
+## To restore
+
+```
+# rsync -aAXv --dry-run --delete --exclude="lost+found" /backup /
+```
